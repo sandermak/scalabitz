@@ -2,7 +2,7 @@ package service
 
 import play.api.libs.concurrent.Execution.Implicits._
 import play.api.libs.ws.{WS, Response}
-import play.api.libs.json.{JsValue, Writes, JsPath, Json}
+import play.api.libs.json.{JsValue, Writes, Json}
 import play.api.{Logger, Play}
 import play.api.Play.current
 import concurrent.Future
@@ -12,7 +12,7 @@ import play.api.libs.json.Writes._
 
 
 case class BitlyArticle(title: String, url: String, domain: String, content: String, keywords: Option[String]) {
-  val programmingTerms = Set("ui", "typesafe", "programming", "query", "configuration", "database",
+  val programmingTerms = Set("markdown", "ui", "typesafe", "programming", "query", "configuration", "database",
     "websocket", "development", "api", "scaladoc", "akka", "developer", "html5", "framework")
   var rawResultId: String = _
 
@@ -35,8 +35,9 @@ object BitlyArticleService {
     def writes(a: BitlyArticle): JsValue = {
        val articleJson = Json.toJson[BitlyArticle](a)(bitlyArtWrites)
        Json.obj(
-         "BitlyArticle" -> articleJson,
+         "bitlyArticle" -> articleJson,
          "isProgrammingRelated" -> a.isProgrammingRelated,
+         "isPublished" -> false,
          "hash" -> a.hashCode.toString,
          "rawResultId" -> a.rawResultId
        )

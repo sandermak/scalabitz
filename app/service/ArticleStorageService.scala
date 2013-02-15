@@ -4,6 +4,7 @@ package controllers
 
 import play.api._
 import play.api.mvc._
+import scala.concurrent.Future
 
 // Reactive Mongo imports
 import reactivemongo.api._
@@ -41,52 +42,23 @@ object ArticleStorageService {
       "parsedResults" -> parsedResults
 
     )
-    collection.insert[JsValue](json).foreach(lastError =>
-      if(!lastError.ok) Logger.warn(s"Mongo error: $lastError")
-    )
-  }
-
-}
-
-object Application extends Controller with MongoController {
-  val db = ReactiveMongoPlugin.db
-  lazy val collection = db("persons")
-
-  def index = Action { Ok("works") }
-
-  // creates a new Person building a JSON from parameters
-  def create(name: String, age: Int) = Action {
-    Async {
-      val json = Json.obj(
-        "name" -> name,
-        "age" -> age,
-        "created" -> new java.util.Date().getTime()
+    articleExists(parsedResults).foreach {
+      case false => collection.insert[JsValue](json).foreach(lastError =>
+        if(!lastError.ok) Logger.warn(s"Mongo error after insert: $lastError")
       )
-
-      collection.insert[JsValue]( json ).map( lastError =>
-        Ok("Mongo LastErorr:%s".format(lastError))
-      )
+      case true => Logger.debug("Skipped article")
     }
   }
 
-  // creates a new Person directly from Json
-  def createFromJson = Action(parse.json) {  request =>
-    Async {
-      collection.insert[JsValue]( request.body ).map( lastError =>
-        Ok("Mongo LastErorr:%s".format(lastError))
-      )
-    }
+  def getPublishedArticles(): Future[List[JsValue]] = {
+    val qb = QueryBuilder().query(Json.obj( "parsedResults.isPublished" -> true))
+    collection.find[JsValue](qb).toList
   }
 
-  // queries for a person by name
-  def findByName(name: String) = Action {
-    Async {
-      val qb = QueryBuilder().query(Json.obj( "name" -> name )).sort( "created" -> SortOrder.Descending)
-
-      collection.find[JsValue]( qb ).toList.map { persons =>
-        Ok(persons.foldLeft(JsArray(List()))( (obj, person) => obj ++ Json.arr(person) ))
-      }
-    }
+  private[this] def articleExists(parsedResults: JsValue): Future[Boolean] = {
+    val hash = parsedResults \ "hash"
+    val qb = QueryBuilder().query(Json.obj( "parsedResults.hash" -> hash))
+    collection.find[JsValue](qb).toList.map(t => !t.isEmpty)
   }
 
 }
