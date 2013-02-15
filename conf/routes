@@ -4,7 +4,9 @@
 
 # Home page
 GET     /articles                   controllers.Application.index
-GET     /api/articles               controllers.Scalabitz.index
+GET     /allarticles                controllers.Scalabitz.listAllArticles
+GET     /api/articles               controllers.Scalabitz.retrieveArticles
+GET     /api/articles/:id           controllers.Scalabitz.publish(id)
 
 # Map static resources from the /public folder to the /assets URL path
 GET     /assets/*file               controllers.Assets.at(path="/public", file)

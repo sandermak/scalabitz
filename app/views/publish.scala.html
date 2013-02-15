@@ -1,0 +1,22 @@
+@(articles: List[(String, service.BitlyArticle)])
+
+<!DOCTYPE html>
+
+<html>
+<head>
+<title>test</title>
+<link rel="stylesheet" media="screen" href="@routes.Assets.at("stylesheets/main.css")">
+<link rel="shortcut icon" type="image/png" href="@routes.Assets.at("images/favicon.png")">
+<script src="@routes.Assets.at("javascripts/jquery-1.9.0.min.js")" type="text/javascript"></script>
+</head>
+<body>
+<ul>
+@if(articles.isEmpty) {<em>Could not retrieve articles</em>}
+@for(article <- articles) {
+  <li><a href="@article._2.url">@article._2.title</a> (@article._2.domain) indicator: @(article._2.isProgrammingRelated)
+      <a href="@routes.Scalabitz.publish(article._1)">publish</a>
+  </li>
+}
+</ul>
+</body>
+</html>
