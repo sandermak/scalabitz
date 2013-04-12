@@ -3,7 +3,7 @@
 # ~~~~
 
 # Home page
-GET     /articles                   controllers.Application.index
+GET     /                           controllers.Application.index
 GET     /allarticles                controllers.Scalabitz.listAllArticles
 GET     /api/articles               controllers.Scalabitz.retrieveArticles
 GET     /api/articles/:id           controllers.Scalabitz.publish(id)

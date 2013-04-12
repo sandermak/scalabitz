@@ -8,12 +8,12 @@ import play.api.Play.current
 import concurrent.Future
 import service.controllers.ArticleRepository
 import play.api.libs.json.Writes._
-
+import play.libs.Akka
 
 
 case class BitlyArticle(title: String, url: String, domain: String, content: String, keywords: Option[String]) {
   val programmingTerms = Set("markdown", "ui", "typesafe", "programming", "query", "configuration", "database",
-    "websocket", "development", "api", "scaladoc", "akka", "developer", "html5", "framework", "function")
+    "websocket", "software", "api", "scaladoc", "akka", "developer", "html5", "framework", "function", "trait")
   var rawResultId: String = _
 
   // Simply check if the programmingTerms occur in any of the relevant fields
@@ -41,6 +41,20 @@ object BitlyArticleRetrievalService {
          "rawResultId" -> a.rawResultId
        )
     }
+  }
+
+  def startScheduledRetrieval() {
+    import akka.actor._
+    import scala.concurrent.duration._
+
+    case object FetchArticles
+
+    val fetchActor = Akka.system.actorOf(Props(new Actor {
+      def receive = {
+        case FetchArticles => Logger.info("Retrieving!")
+      }
+    }))
+    Akka.system.scheduler.schedule(10 seconds, 5 minutes, fetchActor, FetchArticles)
   }
 
   def fetchPossiblyNewArticles(): Future[List[BitlyArticle]] = {

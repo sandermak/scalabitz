@@ -2,19 +2,134 @@
 
 <!DOCTYPE html>
 
-<html>
+<!-- paulirish.com/2008/conditional-stylesheets-vs-css-hacks-answer-neither/ -->
+<!--[if lt IE 7]> <html class="no-js lt-ie9 lt-ie8 lt-ie7" lang="en"> <![endif]-->
+<!--[if IE 7]>    <html class="no-js lt-ie9 lt-ie8" lang="en"> <![endif]-->
+<!--[if IE 8]>    <html class="no-js lt-ie9" lang="en"> <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en"> <!--<![endif]-->
 <head>
-<title>test</title>
-<link rel="stylesheet" media="screen" href="@routes.Assets.at("stylesheets/main.css")">
-<link rel="shortcut icon" type="image/png" href="@routes.Assets.at("images/favicon.png")">
-<script src="@routes.Assets.at("javascripts/jquery-1.9.0.min.js")" type="text/javascript"></script>
+    <meta charset="utf-8" />
+
+        <!-- Set the viewport width to device width for mobile -->
+    <meta name="viewport" content="width=device-width" />
+
+    <title>Welcome to Foundation | Feed</title>
+
+        <!-- Included CSS Files (Uncompressed) -->
+        <!--
+  <link rel="stylesheet" href="stylesheets/foundation.css">
+  -->
+
+        <!-- Included CSS Files (Compressed) -->
+    <link rel="stylesheet" href=@routes.Assets.at("stylesheets/foundation.min.css") />
+    <link rel="stylesheet" href=@routes.Assets.at("stylesheets/app.css") />
+
+    <script src=@routes.Assets.at("javascripts/modernizr.foundation.js")></script>
 </head>
 <body>
-<ul>
-@if(articles.isEmpty) {<em>Could not retrieve articles</em>}
-@for(article <- articles) {
-  <li><a href="@article.url">@article.title</a> (@article.domain) indicator: @(article.isProgrammingRelated)</li>
-}
-</ul>
+
+        <!-- Header and Nav -->
+
+    <div class="row">
+        <div class="twelve columns">
+            <div class="panel">
+                <img src=@routes.Assets.at("images/scalabitz_logo.png") alt="Scalabitz logo"><br>
+                See what the Scala world shares
+            </div>
+        </div>
+    </div>
+
+        <!-- End Header and Nav -->
+
+
+    <div class="row">
+
+            <!-- Main Feed -->
+            <!-- This has been source ordered to come first in the markup (and on small devices) but to be to the right of the nav on larger screens -->
+        <div class="six columns push-three">
+            @if(articles.isEmpty) {<em>Could not retrieve articles</em>}
+            @for(article <- articles) {
+                <!-- Feed Entry -->
+            <div class="row">
+                <div class="two columns mobile-one"><img src="http://placehold.it/80x80&amp;text=[img]" /></div>
+                <div class="ten columns">
+                    <a href="@article.url">@article.title</a> (@article.domain)
+                    <ul class="link-list">
+                        <li><a href="">Reply</a></li>
+                        <li><a href="">Share</a></li>
+                    </ul>
+
+
+                    <h6>2 Comments</h6>
+                    <div class="row">
+                        <div class="two columns mobile-one"><img src="http://placehold.it/50x50&amp;text=[img]" /></div>
+                        <div class="ten columns"><p>Bacon ipsum dolor sit amet nulla ham qui sint exercitation eiusmod commodo, chuck duis velit. Aute in reprehenderit</p></div>
+                    </div>
+                    <div class="row">
+                        <div class="two columns mobile-one"><img src="http://placehold.it/50x50&amp;text=[img]" /></div>
+                        <div class="ten columns"><p>Bacon ipsum dolor sit amet nulla ham qui sint exercitation eiusmod commodo, chuck duis velit. Aute in reprehenderit</p></div>
+                    </div>
+                </div>
+            </div>
+                <!-- End Feed Entry -->
+            }
+
+            <hr />
+
+
+
+        </div>
+
+
+            <!-- Nav Sidebar -->
+            <!-- This is source ordered to be pulled to the left on larger screens -->
+        <div class="three columns pull-six">
+            <div class="panel">
+                <p>Scalabitz uses <a href="http://bitly.com">bit.ly</a>'s API to find out what hot Scala content is shared around the web.</p>
+
+                <h5>Powered by</h5>
+
+                <dl class="vertical tabs">
+                    <dd><a href="http://dev.bitly.com/data_apis.html#v3_search">Bit.ly API</a></dd>
+                    <dd><a href="http://www.scala-lang.org/2.10.1">Scala 2.10</a></dd>
+                    <dd><a href="http://www.playframework.com">Play 2.1</a></dd>
+
+                </dl>
+
+            </div>
+        </div>
+
+
+            <!-- Right Sidebar -->
+            <!-- On small devices this column is hidden -->
+        <aside class="three columns hide-for-small">
+            <p><img src="http://placehold.it/300x440&amp;text=[ad]" /></p>
+            <SCRIPT charset="utf-8" type="text/javascript" src="http://ws.amazon.com/widgets/q?ServiceVersion=20070822&MarketPlace=US&ID=V20070822/US/branandboun-20/8001/8c1c92b9-8472-45d4-9153-68caf4c3d511"> </SCRIPT> <NOSCRIPT><A HREF="http://ws.amazon.com/widgets/q?ServiceVersion=20070822&MarketPlace=US&ID=V20070822%2FUS%2Fbranandboun-20%2F8001%2F8c1c92b9-8472-45d4-9153-68caf4c3d511&Operation=NoScript">Amazon.com Widgets</A></NOSCRIPT>
+    </div>
+
+
+        <!-- Footer -->
+
+    <footer class="row">
+        <div class="twelve columns">
+            <hr />
+            <div class="row">
+                <div class="six columns">
+                    <p>Created by <a href="http://branchandbound.net/about.html">Sander Mak</a>.</p>
+                </div>
+                <div class="six columns">
+                    <ul class="link-list right">
+                        <li><a href="#">Section 1</a></li>
+                        <li><a href="#">Section 6</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Included JS Files (Compressed) -->
+    <script src=@routes.Assets.at("javascripts/foundation.min.js")></script>
+
 </body>
 </html>
+
