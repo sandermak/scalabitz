@@ -13,8 +13,8 @@
         <!-- Set the viewport width to device width for mobile -->
     <meta name="viewport" content="width=device-width" />
 
-    <title>Welcome to Foundation | Feed</title>
-
+    <title>Scalabitz - See what the Scala community shares</title>
+    <meta name="description" content="Scalabitz gathers popular links to articles on Scala programming." />
         <!-- Included CSS Files (Uncompressed) -->
         <!--
   <link rel="stylesheet" href="stylesheets/foundation.css">
@@ -33,8 +33,15 @@
     <div class="row">
         <div class="twelve columns">
             <div class="panel">
-                <img src=@routes.Assets.at("images/scalabitz_logo.png") alt="Scalabitz logo"><br>
-                See what the Scala world shares
+                <div class="row">
+                    <div class="six columns">
+                        <img src=@routes.Assets.at("images/scalabitz_logo.png") alt="Scalabitz logo">
+                    </div>
+                    <div class="six columns">
+                        <br><br>       <br>
+                        <h4 class="subheader right">See what the Scala community shares</h4>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -47,41 +54,35 @@
             <!-- Main Feed -->
             <!-- This has been source ordered to come first in the markup (and on small devices) but to be to the right of the nav on larger screens -->
         <div class="six columns push-three">
-            @if(articles.isEmpty) {<em>Could not retrieve articles</em>}
+            @if(articles.isEmpty) {
+                <em>No articles available</em>
+            }
             @for(article <- articles) {
-                <!-- Feed Entry -->
-            <div class="row">
-                <div class="two columns mobile-one"><img src="http://placehold.it/80x80&amp;text=[img]" /></div>
-                <div class="ten columns">
-                    <a href="@article.url">@article.title</a> (@article.domain)
-                    <ul class="link-list">
-                        <li><a href="">Reply</a></li>
-                        <li><a href="">Share</a></li>
-                    </ul>
+                    <!-- Feed Entry -->
+                <div class="row">
+                    <div class="four columns mobile-one">
+                        <a href="@article.url">
+                            <img class="preview" width="160" height="160" src="http://api.webthumbnail.org/?width=160&height=160&format=png&url=@article.url"> </div>
+                        </a>
+                    <div class="eight columns">
+                        <a href="@article.url">@article.title</a><br>
+                        (@article.domain)
+                        <br>
+                        <br>
 
-
-                    <h6>2 Comments</h6>
-                    <div class="row">
-                        <div class="two columns mobile-one"><img src="http://placehold.it/50x50&amp;text=[img]" /></div>
-                        <div class="ten columns"><p>Bacon ipsum dolor sit amet nulla ham qui sint exercitation eiusmod commodo, chuck duis velit. Aute in reprehenderit</p></div>
-                    </div>
-                    <div class="row">
-                        <div class="two columns mobile-one"><img src="http://placehold.it/50x50&amp;text=[img]" /></div>
-                        <div class="ten columns"><p>Bacon ipsum dolor sit amet nulla ham qui sint exercitation eiusmod commodo, chuck duis velit. Aute in reprehenderit</p></div>
+                        <div class="row">
+                            <div class="five columns"> <a href="https://twitter.com/share" class="twitter-share-button" data-url="@article.url" data-text="@article.title" data-via="scalabitz"> Tweet </a> </div>
+                            <div class="seven columns"> <p>1 bit.ly clicks </p> </div>
+                        </div>
                     </div>
                 </div>
-            </div>
-                <!-- End Feed Entry -->
+                <br>
+                    <!-- End Feed Entry -->
             }
-
-            <hr />
-
-
-
         </div>
 
 
-            <!-- Nav Sidebar -->
+        <!-- Nav Sidebar -->
             <!-- This is source ordered to be pulled to the left on larger screens -->
         <div class="three columns pull-six">
             <div class="panel">
@@ -95,16 +96,17 @@
                     <dd><a href="http://www.playframework.com">Play 2.1</a></dd>
 
                 </dl>
+                <a href="https://twitter.com/scalabitz" class="twitter-follow-button" data-show-count="false" data-size="large">Follow &#0040;scalabitz</a>
 
             </div>
-        </div>
+           </div>
 
 
             <!-- Right Sidebar -->
             <!-- On small devices this column is hidden -->
         <aside class="three columns hide-for-small">
             <p><img src="http://placehold.it/300x440&amp;text=[ad]" /></p>
-            <SCRIPT charset="utf-8" type="text/javascript" src="http://ws.amazon.com/widgets/q?ServiceVersion=20070822&MarketPlace=US&ID=V20070822/US/branandboun-20/8001/8c1c92b9-8472-45d4-9153-68caf4c3d511"> </SCRIPT> <NOSCRIPT><A HREF="http://ws.amazon.com/widgets/q?ServiceVersion=20070822&MarketPlace=US&ID=V20070822%2FUS%2Fbranandboun-20%2F8001%2F8c1c92b9-8472-45d4-9153-68caf4c3d511&Operation=NoScript">Amazon.com Widgets</A></NOSCRIPT>
+            <script charset="utf-8" type="text/javascript" src="http://ws.amazon.com/widgets/q?ServiceVersion=20070822&MarketPlace=US&ID=V20070822/US/branandboun-20/8001/8c1c92b9-8472-45d4-9153-68caf4c3d511"> </script> <noscript><a href="http://ws.amazon.com/widgets/q?ServiceVersion=20070822&MarketPlace=US&ID=V20070822%2FUS%2Fbranandboun-20%2F8001%2F8c1c92b9-8472-45d4-9153-68caf4c3d511&Operation=NoScript">Amazon.com Widgets</a></noscript>
     </div>
 
 
@@ -119,8 +121,7 @@
                 </div>
                 <div class="six columns">
                     <ul class="link-list right">
-                        <li><a href="#">Section 1</a></li>
-                        <li><a href="#">Section 6</a></li>
+                        <li><a href="/about.html">About</a></li>
                     </ul>
                 </div>
             </div>
@@ -129,7 +130,7 @@
 
     <!-- Included JS Files (Compressed) -->
     <script src=@routes.Assets.at("javascripts/foundation.min.js")></script>
-
+    <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>
 </body>
 </html>
 

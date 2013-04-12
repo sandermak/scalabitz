@@ -72,7 +72,7 @@ object ArticleRepository {
 
   def getPublishedArticles(): Future[List[JsValue]] = {
     val qb = QueryBuilder().query(Json.obj("parsedResults.isPublished" -> true)).sort("saved_at" -> SortOrder.Descending)
-    collection.find[JsValue](qb).toList(15)
+    collection.find[JsValue](qb).toList(10)
   }
 
   def getAllArticles(): Future[List[(String, JsValue)]] = {

@@ -1,8 +1,14 @@
-/* Artfully masterminded by ZURB  */
 
 body
 {
+    /* background from subtlepatterns.com */
     background-image:url('/assets/images/light_wool.png');
     background-color:#ffffff;
+}
+
+img.preview {
+    border: 1px dashed #919191;
+    padding: 3px;
+    background-color: #DDDDDD;
 }
 
