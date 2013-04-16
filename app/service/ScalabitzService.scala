@@ -4,18 +4,15 @@ import play.api.libs.concurrent.Execution.Implicits._
 import concurrent.Future
 import service.controllers.ArticleRepository
 import play.api.libs.json.{JsValue, Json}
+import play.Logger
+
+
+case class ScalabitzArticle(id: String, article: BitlyArticle, clicks: Int);
 
 object ScalabitzService {
   private[this] implicit val bitlyArtReads = Json.reads[BitlyArticle]
 
-  //  ArticleStorageService.getPublishedArticles().map { jsonList =>
-  //    for {
-  //      json <- jsonList
-  //      result <- Json.fromJson[BitlyArticle](json \ "parsedResults" \ "bitlyArticle").asOpt
-  //    } yield result
-  //
-  //  }
-  def getPublishedArticles(): Future[List[BitlyArticle]] = {
+  def getPublishedArticles(): Future[List[ScalabitzArticle]] = {
     ArticleRepository.getPublishedArticles().map {
       articles =>
         for {
@@ -25,19 +22,19 @@ object ScalabitzService {
     }
   }
 
-  def getAllArticles(): Future[List[(String,BitlyArticle)]] = {
+  def getAllArticles(): Future[List[ScalabitzArticle]] = {
     ArticleRepository.getAllArticles().map {
       articles =>
         for {
           articleJs <- articles
-          article <- jsToModel(articleJs._2)
-        } yield (articleJs._1, article)
-      //ArticleRepository.getAllArticles().map(((t: List[(String, BitlyArticle)]) => t.map { (id: String,value: JsValue) => (id, jsToModel(value))})
+          article <- jsToModel(articleJs)
+        } yield article
     }
   }
 
-  private[this] def jsToModel(json: JsValue): Option[BitlyArticle] = {
-    Json.fromJson[BitlyArticle](json \ "parsedResults" \ "bitlyArticle").asOpt
+  private[this] def jsToModel(json: (String, JsValue)): Option[ScalabitzArticle] = {
+    val article = Json.fromJson[BitlyArticle](json._2 \ "parsedResults" \ "bitlyArticle")
+    article.asOpt.map(article => ScalabitzArticle(json._1, article, (json._2 \ "parsedResults" \ "clicks").as[Int]))
   }
 
 }

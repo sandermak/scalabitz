@@ -45,7 +45,7 @@ object ArticleRepository {
   }
 
   /**
-   * Insert article if it doesn't exist already
+   * Insert article if it doesn't exist already.
    *
    * @param parsedResults json value to store
    */
@@ -55,39 +55,57 @@ object ArticleRepository {
       "parsedResults" -> parsedResults
 
     )
-    articleExists(parsedResults).foreach {
+    articleExists(parsedResults).map {
       case false => collection.insert[JsValue](json).foreach(lastError =>
-        if (!lastError.ok) Logger.warn(s"Mongo error after insert: $lastError")
-      )
-      case true => Logger.debug("Skipped article")
+                      if (!lastError.ok) Logger.warn(s"Mongo error after insert: $lastError")
+                    )
+      case true => Logger.info("Skipped article");
     }
   }
 
   def publishArticle(id: String) {
     val updateCommand = Json.obj("$set" -> Json.obj("parsedResults.isPublished" -> true))
-    collection.update(BSONDocument("_id" -> BSONObjectID(id)), updateCommand).foreach(lastError =>
-      if (!lastError.ok) Logger.warn(s"Mongo error after update of $id: $lastError")
-    )
+    update(id, updateCommand)
   }
 
-  def getPublishedArticles(): Future[List[JsValue]] = {
-    val qb = QueryBuilder().query(Json.obj("parsedResults.isPublished" -> true)).sort("saved_at" -> SortOrder.Descending)
-    collection.find[JsValue](qb).toList(10)
+  def updateClicks(id: String, clicks: Int) {
+    val updateCommand = Json.obj("$set" -> Json.obj("parsedResults.clicks" -> clicks))
+    update(id, updateCommand)
+  }
+
+  def getPublishedArticles(): Future[List[(String, JsValue)]] = {
+    buildAndRunQuery(Json.obj("parsedResults.isPublished" -> true), Some(10))
   }
 
   def getAllArticles(): Future[List[(String, JsValue)]] = {
-    def getObjId(value: JsValue): String = {
-      (value \ "_id" \ "$oid").as[String]
+    buildAndRunQuery(Json.obj(), None)
+  }
+
+  private[this] def getObjId(value: JsValue): String = {
+    (value \ "_id" \ "$oid").as[String]
+  }
+
+  private[this] def buildAndRunQuery(queryObject: JsValue, maxResults: Option[Int]): Future[List[(String, JsValue)]] = {
+    val qb = QueryBuilder().query(queryObject).sort("saved_at" -> SortOrder.Descending)
+    val query = collection.find[JsValue](qb);
+    val list = maxResults match {
+      case Some(max) => query.toList(max)
+      case None => query.toList();
     }
 
-    val qb = QueryBuilder().query(Json.obj()).sort("saved_at" -> SortOrder.Descending)
-    collection.find[JsValue](qb).toList().map(_.map(jsValue => (getObjId(jsValue), jsValue)))
+    list.map(_.map(jsValue => (getObjId(jsValue), jsValue)))
   }
 
   private[this] def articleExists(parsedResults: JsValue): Future[Boolean] = {
     val hash = parsedResults \ "hash"
     val qb = QueryBuilder().query(Json.obj("parsedResults.hash" -> hash))
     collection.find[JsValue](qb).toList.map(t => !t.isEmpty)
+  }
+
+  private[this] def update(id: String, updateCommand: JsObject) {
+    collection.update(BSONDocument("_id" -> BSONObjectID(id)), updateCommand).foreach(lastError =>
+      if (!lastError.ok) Logger.warn(s"Mongo error after update of $id: $lastError")
+    )
   }
 
 }

@@ -1,4 +1,4 @@
-@(articles: List[service.BitlyArticle])
+@(articles: List[service.ScalabitzArticle])
 
 <!DOCTYPE html>
 
@@ -57,22 +57,22 @@
             @if(articles.isEmpty) {
                 <em>No articles available</em>
             }
-            @for(article <- articles) {
+            @for(entry <- articles) {
                     <!-- Feed Entry -->
                 <div class="row">
                     <div class="four columns mobile-one">
-                        <a href="@article.url">
-                            <img class="preview" width="160" height="160" src="http://api.webthumbnail.org/?width=160&height=160&format=png&url=@article.url"> </div>
+                        <a href="@entry.article.url">
+                            <img class="preview" width="130" height="130" src="http://api.webthumbnail.org/?width=130&height=130&format=png&url=@entry.article.url"> </div>
                         </a>
                     <div class="eight columns">
-                        <a href="@article.url">@article.title</a><br>
-                        (@article.domain)
+                        <a href="@entry.article.url">@entry.article.title</a><br>
+                        (@entry.article.domain)
                         <br>
                         <br>
 
                         <div class="row">
-                            <div class="five columns"> <a href="https://twitter.com/share" class="twitter-share-button" data-url="@article.url" data-text="@article.title" data-via="scalabitz"> Tweet </a> </div>
-                            <div class="seven columns"> <p>1 bit.ly clicks </p> </div>
+                            <div class="five columns"> <a href="https://twitter.com/share" class="twitter-share-button" data-url="@entry.article.url" data-text="@entry.article.title" data-via="scalabitz"> Tweet </a> </div>
+                            <div class="seven columns"> <p>@entry.clicks bit.ly clicks </p> </div>
                         </div>
                     </div>
                 </div>

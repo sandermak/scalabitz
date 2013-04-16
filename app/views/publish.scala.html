@@ -1,4 +1,4 @@
-@(articles: List[(String, service.BitlyArticle)])
+@(articles: List[service.ScalabitzArticle])
 
 <!DOCTYPE html>
 
@@ -12,9 +12,9 @@
 <body>
 <ul>
 @if(articles.isEmpty) {<em>Could not retrieve articles</em>}
-@for(article <- articles) {
-  <li><a href="@article._2.url">@article._2.title</a> (@article._2.domain) indicator: @(article._2.isProgrammingRelated)
-      <a href="@routes.Scalabitz.publish(article._1)">publish</a>
+@for(entry <- articles) {
+  <li><a href="@entry.article.url">@entry.article.title</a> (@entry.article.domain) indicator: @(entry.article.isProgrammingRelated)
+      <a href="@routes.Scalabitz.publish(entry.id)">publish</a>
   </li>
 }
 </ul>

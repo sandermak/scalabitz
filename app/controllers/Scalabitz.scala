@@ -3,7 +3,7 @@ package controllers
 import play.api.mvc.{Action, Controller}
 import play.api.libs.concurrent.Execution.Implicits._
 import concurrent.Future
-import service.{ScalabitzService, BitlyArticleRetrievalService}
+import service.{ScalabitzService, BitlyService}
 import service.controllers.ArticleRepository
 import play.Logger
 
@@ -12,7 +12,7 @@ object Scalabitz extends Controller {
   def retrieveArticles() = Action {
     Async {
       Logger.info("Force retrieval of articles from bit.ly")
-      BitlyArticleRetrievalService.fetchPossiblyNewArticles().map(articles => Ok(articles.toString))
+      BitlyService.fetchPossiblyNewArticles().map(articles => Ok(articles.toString))
     }
   }
 

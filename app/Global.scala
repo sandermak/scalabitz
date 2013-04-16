@@ -1,12 +1,12 @@
 import play.api._
-import service.BitlyArticleRetrievalService
+import service.BitlyService
 
 object Global extends GlobalSettings {
 
 
   override def onStart(app: Application) {
 
-    BitlyArticleRetrievalService.startScheduledRetrieval()
+    BitlyService.startScheduledTasks()
 
   }
 
