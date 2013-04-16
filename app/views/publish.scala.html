@@ -1,22 +1,12 @@
 @(articles: List[service.ScalabitzArticle])
 
-<!DOCTYPE html>
-
-<html>
-<head>
-<title>test</title>
-<link rel="stylesheet" media="screen" href="@routes.Assets.at("stylesheets/main.css")">
-<link rel="shortcut icon" type="image/png" href="@routes.Assets.at("images/favicon.png")">
-<script src="@routes.Assets.at("javascripts/jquery-1.9.0.min.js")" type="text/javascript"></script>
-</head>
-<body>
-<ul>
-@if(articles.isEmpty) {<em>Could not retrieve articles</em>}
-@for(entry <- articles) {
-  <li><a href="@entry.article.url">@entry.article.title</a> (@entry.article.domain) indicator: @(entry.article.isProgrammingRelated)
-      <a href="@routes.Scalabitz.publish(entry.id)">publish</a>
-  </li>
+@index {
+    @if(articles.isEmpty) {<em>Could not retrieve articles</em>}
+    <ul>
+      @for(entry <- articles) {
+      <li><a href="@entry.article.url">@entry.article.title</a> (@entry.article.domain) indicator: @(entry.article.isProgrammingRelated)
+          <a href="@routes.ScalabitzAdmin.publish(entry.id)">publish</a>
+      </li>
+    }
+    </ul>
 }
-</ul>
-</body>
-</html>

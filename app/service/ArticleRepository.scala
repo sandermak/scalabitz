@@ -55,11 +55,12 @@ object ArticleRepository {
       "parsedResults" -> parsedResults
 
     )
-    articleExists(parsedResults).map {
+
+    articleExists(parsedResults).foreach {
       case false => collection.insert[JsValue](json).foreach(lastError =>
                       if (!lastError.ok) Logger.warn(s"Mongo error after insert: $lastError")
                     )
-      case true => Logger.info("Skipped article");
+      case true  => Logger.info("Skipped article");
     }
   }
 

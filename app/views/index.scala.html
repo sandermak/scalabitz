@@ -1,4 +1,4 @@
-@(articles: List[service.ScalabitzArticle])
+@(content: Html)
 
 <!DOCTYPE html>
 
@@ -13,18 +13,15 @@
         <!-- Set the viewport width to device width for mobile -->
     <meta name="viewport" content="width=device-width" />
 
-    <title>Scalabitz - See what the Scala community shares</title>
+    <title>Scalabitz - see what the Scala community shares</title>
     <meta name="description" content="Scalabitz gathers popular links to articles on Scala programming." />
-        <!-- Included CSS Files (Uncompressed) -->
-        <!--
-  <link rel="stylesheet" href="stylesheets/foundation.css">
-  -->
 
         <!-- Included CSS Files (Compressed) -->
-    <link rel="stylesheet" href=@routes.Assets.at("stylesheets/foundation.min.css") />
-    <link rel="stylesheet" href=@routes.Assets.at("stylesheets/app.css") />
+    <link rel="stylesheet" href="@routes.Assets.at("stylesheets/foundation.min.css")" />
+    <link rel="stylesheet" href="@routes.Assets.at("stylesheets/app.css")" />
 
-    <script src=@routes.Assets.at("javascripts/modernizr.foundation.js")></script>
+    <script src="@routes.Assets.at("javascripts/modernizr.foundation.js")"></script>
+
 </head>
 <body>
 
@@ -35,7 +32,7 @@
             <div class="panel">
                 <div class="row">
                     <div class="six columns">
-                        <img src=@routes.Assets.at("images/scalabitz_logo.png") alt="Scalabitz logo">
+                        <a href="/"><img src="@routes.Assets.at("images/scalabitz_logo.png")" alt="Scalabitz logo"></a>
                     </div>
                     <div class="six columns">
                         <br><br>       <br>
@@ -54,31 +51,7 @@
             <!-- Main Feed -->
             <!-- This has been source ordered to come first in the markup (and on small devices) but to be to the right of the nav on larger screens -->
         <div class="six columns push-three">
-            @if(articles.isEmpty) {
-                <em>No articles available</em>
-            }
-            @for(entry <- articles) {
-                    <!-- Feed Entry -->
-                <div class="row">
-                    <div class="four columns mobile-one">
-                        <a href="@entry.article.url">
-                            <img class="preview" width="130" height="130" src="http://api.webthumbnail.org/?width=130&height=130&format=png&url=@entry.article.url"> </div>
-                        </a>
-                    <div class="eight columns">
-                        <a href="@entry.article.url">@entry.article.title</a><br>
-                        (@entry.article.domain)
-                        <br>
-                        <br>
-
-                        <div class="row">
-                            <div class="five columns"> <a href="https://twitter.com/share" class="twitter-share-button" data-url="@entry.article.url" data-text="@entry.article.title" data-via="scalabitz"> Tweet </a> </div>
-                            <div class="seven columns"> <p>@entry.clicks bit.ly clicks </p> </div>
-                        </div>
-                    </div>
-                </div>
-                <br>
-                    <!-- End Feed Entry -->
-            }
+            @content
         </div>
 
 
@@ -86,7 +59,8 @@
             <!-- This is source ordered to be pulled to the left on larger screens -->
         <div class="three columns pull-six">
             <div class="panel">
-                <p>Scalabitz uses <a href="http://bitly.com">bit.ly</a>'s API to find out what hot Scala content is shared around the web.</p>
+                <p>Scalabitz uses <a href="http://bitly.com">bit.ly</a>'s API to find out what hot Scala content is shared around the web. <a href="@routes.Application.about()">Read more.</a></p>
+
 
                 <h5>Powered by</h5>
 
@@ -96,7 +70,7 @@
                     <dd><a href="http://www.playframework.com">Play 2.1</a></dd>
 
                 </dl>
-                <a href="https://twitter.com/scalabitz" class="twitter-follow-button" data-show-count="false" data-size="large">Follow &#0040;scalabitz</a>
+                <a href="https://twitter.com/scalabitz" class="twitter-follow-button" data-show-count="false" data-size="large">Follow @@scalabitz</a>
 
             </div>
            </div>
@@ -105,8 +79,8 @@
             <!-- Right Sidebar -->
             <!-- On small devices this column is hidden -->
         <aside class="three columns hide-for-small">
-            <p><img src="http://placehold.it/300x440&amp;text=[ad]" /></p>
-            <script charset="utf-8" type="text/javascript" src="http://ws.amazon.com/widgets/q?ServiceVersion=20070822&MarketPlace=US&ID=V20070822/US/branandboun-20/8001/8c1c92b9-8472-45d4-9153-68caf4c3d511"> </script> <noscript><a href="http://ws.amazon.com/widgets/q?ServiceVersion=20070822&MarketPlace=US&ID=V20070822%2FUS%2Fbranandboun-20%2F8001%2F8c1c92b9-8472-45d4-9153-68caf4c3d511&Operation=NoScript">Amazon.com Widgets</a></noscript>
+            <script charset="utf-8" type="text/javascript" src="http://ws.amazon.com/widgets/q?ServiceVersion=20070822&amp;MarketPlace=US&amp;ID=V20070822/US/branandboun-20/8001/8c1c92b9-8472-45d4-9153-68caf4c3d511"> </script> <noscript><a href="http://ws.amazon.com/widgets/q?ServiceVersion=20070822&amp;MarketPlace=US&amp;ID=V20070822%2FUS%2Fbranandboun-20%2F8001%2F8c1c92b9-8472-45d4-9153-68caf4c3d511&amp;Operation=NoScript">Amazon.com Widgets</a></noscript>
+        </aside>
     </div>
 
 
@@ -117,11 +91,11 @@
             <hr />
             <div class="row">
                 <div class="six columns">
-                    <p>Created by <a href="http://branchandbound.net/about.html">Sander Mak</a>.</p>
+                    <p>Created by <a href="http://branchandbound.net/about.html">Sander Mak</a><br><a href="https://twitter.com/Sander_Mak" class="twitter-follow-button" data-show-count="false">Follow @@Sander_Mak</a></p>
                 </div>
                 <div class="six columns">
                     <ul class="link-list right">
-                        <li><a href="/about.html">About</a></li>
+                        <li><a href="@routes.Application.about()">About</a></li>
                     </ul>
                 </div>
             </div>
@@ -129,8 +103,17 @@
     </footer>
 
     <!-- Included JS Files (Compressed) -->
-    <script src=@routes.Assets.at("javascripts/foundation.min.js")></script>
+    <script src="@routes.Assets.at("javascripts/foundation.min.js")"></script>
     <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>
+    <script>
+            (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+            (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+            m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+            })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+            ga('create', 'UA-15335121-3', 'scalabitz.com');
+            ga('send', 'pageview');
+    </script>
 </body>
 </html>
 
