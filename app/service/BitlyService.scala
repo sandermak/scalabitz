@@ -67,7 +67,7 @@ object BitlyService {
       }
     }))
 
-    Akka.system.scheduler.schedule(10 seconds, 5 minutes, fetchActor, FetchArticles)
+    Akka.system.scheduler.schedule(10 seconds, 30 minutes, fetchActor, FetchArticles)
     Akka.system.scheduler.schedule(10 seconds, 10 minutes, fetchClicksActor, FetchClicks)
   }
 
