@@ -2,7 +2,6 @@ package controllers
 
 import play.api.mvc.{Action, Controller}
 import play.api.libs.concurrent.Execution.Implicits._
-import concurrent.Future
 import service.{ScalabitzService, BitlyService}
 import service.controllers.ArticleRepository
 import play.Logger
@@ -25,44 +24,53 @@ object ScalabitzAdmin extends Controller {
     }
   }
 
-  def listAllArticles() = Secured {
-    Action { implicit request =>
-      Async {
-        ScalabitzService.getPendingArticles().map(articles => Ok(views.html.scalabitzadmin(articles)))
-      }
+  def listPendingArticles() = Secured {
+    Action {
+      implicit request => // necessary to access flash-scope
+        Async {
+          ScalabitzService.getPendingArticles().map(articles => Ok(views.html.scalabitzadmin(articles)))
+        }
     }
   }
 
   def prePublish(id: String, action: String) = Secured {
     Action {
-      Logger.info(s"Put article $id in publishing queue")
-      action match {
-        case "prepublish" => ArticleRepository.prePublishArticle(id)
-                             Redirect("/allarticles").flashing(
-                                "message" -> s"Article $id has been put in the publishing queue"
-                             )
-        case "reject"     => ArticleRepository.rejectArticle(id)
-                             Redirect("/allarticles").flashing(
-                               "message" -> s"Article $id has been rejected"
-                             )
-      }
-
-    }
-  }
-
-  def Secured[A](action: Action[A]) = Action(action.parser) { request =>
-    request.headers.get("Authorization").flatMap { authorization =>
-      authorization.split(" ").drop(1).headOption.filter { encoded =>
-        new String(decodeBase64(encoded.getBytes)).split(":").toList match {
-          case u :: p :: Nil if u == username && p == password => true
-          case _ => false
+      Async {
+        val actionFuture = action match {
+          case "prepublish" => ArticleRepository.prePublishArticle(id)
+          case "reject" => ArticleRepository.rejectArticle(id)
         }
-      }.map(_ => action(request))
-    }.getOrElse {
-      Unauthorized.withHeaders("WWW-Authenticate" -> """Basic realm="Secured"""")
+
+        actionFuture.map {
+          error =>
+            val success = error.getOrElse("successful")
+            Redirect(routes.ScalabitzAdmin.listAllArticles()).flashing(
+              "message" -> s"Action $action for $id: $success"
+            )
+        }
+      }
     }
   }
 
+  /**
+   * Wrap an action so that it can only be executed if HTTP authorization is successful.
+   * Note: this is only secure over https!
+   */
+  def Secured[A](action: Action[A]) = Action(action.parser) {
+    request =>
+      request.headers.get("Authorization").flatMap {
+        authorization =>
+          authorization.split(" ").drop(1).headOption.filter {
+            encoded =>
+              new String(decodeBase64(encoded.getBytes)).split(":").toList match {
+                case u :: p :: Nil if u == username && p == password => true
+                case _ => false
+              }
+          }.map(_ => action(request))
+      }.getOrElse {
+        Unauthorized.withHeaders("WWW-Authenticate" -> """Basic realm="Scalabitz Admin"""")
+      }
+  }
 
 
 }

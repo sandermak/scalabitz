@@ -64,22 +64,22 @@ object ArticleRepository {
     }
   }
 
-  def publishArticle(id: String) {
+  def publishArticle(id: String) = {
     val updateCommand = Json.obj("$set" -> Json.obj("parsedResults.isPublished" -> true))
     update(id, updateCommand)
   }
 
-  def prePublishArticle(id: String) {
+  def prePublishArticle(id: String) = {
     val updateCommand = Json.obj("$set" -> Json.obj("parsedResults.toBePublished" -> "yes"))
     update(id, updateCommand)
   }
 
-  def rejectArticle(id: String) {
+  def rejectArticle(id: String) = {
     val updateCommand = Json.obj("$set" -> Json.obj("parsedResults.isPublished" -> false, "parsedResults.toBePublished" -> "never"))
     update(id, updateCommand)
   }
 
-  def updateClicks(id: String, clicks: Int) {
+  def updateClicks(id: String, clicks: Int) = {
     val updateCommand = Json.obj("$set" -> Json.obj("parsedResults.clicks" -> clicks))
     update(id, updateCommand)
   }
@@ -113,9 +113,12 @@ object ArticleRepository {
     collection.find[JsValue](qb).toList.map(t => !t.isEmpty)
   }
 
-  private[this] def update(id: String, updateCommand: JsObject) {
-    collection.update(BSONDocument("_id" -> BSONObjectID(id)), updateCommand).foreach(lastError =>
-      if (!lastError.ok) Logger.warn(s"Mongo error after update of $id: $lastError")
+  private[this] def update(id: String, updateCommand: JsObject): Future[Option[String]] = {
+    collection.update(BSONDocument("_id" -> BSONObjectID(id)), updateCommand).map(lastError =>
+      if (!lastError.ok) {
+        Logger.warn(s"Mongo error after update of $id: $lastError")
+        Some("Error during update")
+      } else None
     )
   }
 

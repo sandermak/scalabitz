@@ -5,7 +5,7 @@
 # Home page
 GET     /                           controllers.Frontpage.index
 GET     /about                      controllers.Frontpage.about
-GET     /allarticles                controllers.ScalabitzAdmin.listAllArticles
+GET     /allarticles                controllers.ScalabitzAdmin.listPendingArticles
 GET     /api/articles               controllers.ScalabitzAdmin.retrieveArticles
 POST    /api/articles/:id/:action   controllers.ScalabitzAdmin.prePublish(id, action)
 
