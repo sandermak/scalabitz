@@ -1,0 +1,36 @@
+@(articles: List[service.ScalabitzArticle])(implicit flash: Flash)
+
+@index {
+    @if(articles.isEmpty) {
+        <em> Could not retrieve articles </em>
+    }
+    @if(flash.get("message").isDefined) {
+        <div class="panel"> @flash.get("message").head </div>
+    }
+
+    @for(entry <- articles) {
+        <div class="row">
+            <div class="four columns">
+                <a href="@entry.article.url">
+                    <img class="preview" width="130" height="130" src="http://api.webthumbnail.org/?width=130&amp;height=130&amp;format=png&amp;url=@entry.article.url">
+                </a>
+            </div>
+            <div class="eight columns">
+                <a href="@entry.article.url">@entry.article.title</a><br>
+                    (@entry.article.domain)
+                <br>
+                <br>
+                @defining(if(entry.article.isProgrammingRelated) "success" else "alert") { cssclass =>
+                    <div class="alert-box @cssclass">programmingRelated indicator: @(entry.article.isProgrammingRelated)</div>
+                }
+
+                <div class="row">
+                    <div class="three columns"> <form action="@routes.ScalabitzAdmin.prePublish(entry.id, "prepublish")" method="POST"> <input class="nice small radius success button" type="submit" value="publish"> </form> </div>
+                    <div class="three columns"><form action="@routes.ScalabitzAdmin.prePublish(entry.id, "reject")" method="POST"> <input class="nice small radius button" type="submit" value="reject"> </form> </div>
+                    <div class="five columns"> <a href="https://twitter.com/share" class="twitter-share-button" data-url="@entry.article.url" data-text="@entry.article.title" data-via="scalabitz"> Tweet </a> </div>
+                </div>
+            </div>
+        </div>
+    }
+
+}

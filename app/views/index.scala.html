@@ -60,7 +60,7 @@
             <!-- This is source ordered to be pulled to the left on larger screens -->
         <div class="three columns pull-six">
             <div class="panel">
-                <p>Scalabitz uses <a href="http://bitly.com">bit.ly</a>'s API to find out what hot Scala content is shared around the web. <a href="@routes.Application.about()">Read more.</a></p>
+                <p>Scalabitz uses <a href="http://bitly.com">bit.ly</a>'s API to find out what hot Scala content is shared around the web. <a href="@routes.Frontpage.about()">Read more.</a></p>
 
 
                 <h5>Powered by</h5>
@@ -107,8 +107,8 @@
                 </div>
                 <div class="six columns">
                     <ul class="link-list right">
-                        <li><a href="@routes.Application.index()">Frontpage</a></li>
-                        <li><a href="@routes.Application.about()">About</a></li>
+                        <li><a href="@routes.Frontpage.index()">Frontpage</a></li>
+                        <li><a href="@routes.Frontpage.about()">About</a></li>
                     </ul>
                 </div>
             </div>
@@ -124,7 +124,7 @@
             m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
             })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
 
-            ga('create', '@Application.trackingid', '@Application.domain');
+            ga('create', '@Frontpage.trackingid', '@Frontpage.domain');
             ga('send', 'pageview');
     </script>
 </body>

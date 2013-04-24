@@ -9,6 +9,8 @@ import play.Logger
 import play.api.Play
 import play.api.Play.current
 
+import org.apache.commons.codec.binary.Base64.decodeBase64
+
 object ScalabitzAdmin extends Controller {
 
   val username = Play.configuration.getString("admin.username").get
@@ -24,25 +26,34 @@ object ScalabitzAdmin extends Controller {
   }
 
   def listAllArticles() = Secured {
-    Action {
+    Action { implicit request =>
       Async {
-        ScalabitzService.getAllArticles().map(articles => Ok(views.html.publish(articles)))
+        ScalabitzService.getPendingArticles().map(articles => Ok(views.html.scalabitzadmin(articles)))
       }
     }
   }
 
-  def publish(id: String) = Secured {
+  def prePublish(id: String, action: String) = Secured {
     Action {
-      Logger.info(s"Manually publish article $id")
-      ArticleRepository.publishArticle(id)
-      Ok(s"published $id")
+      Logger.info(s"Put article $id in publishing queue")
+      action match {
+        case "prepublish" => ArticleRepository.prePublishArticle(id)
+                             Redirect("/allarticles").flashing(
+                                "message" -> s"Article $id has been put in the publishing queue"
+                             )
+        case "reject"     => ArticleRepository.rejectArticle(id)
+                             Redirect("/allarticles").flashing(
+                               "message" -> s"Article $id has been rejected"
+                             )
+      }
+
     }
   }
 
   def Secured[A](action: Action[A]) = Action(action.parser) { request =>
     request.headers.get("Authorization").flatMap { authorization =>
       authorization.split(" ").drop(1).headOption.filter { encoded =>
-        new String(org.apache.commons.codec.binary.Base64.decodeBase64(encoded.getBytes)).split(":").toList match {
+        new String(decodeBase64(encoded.getBytes)).split(":").toList match {
           case u :: p :: Nil if u == username && p == password => true
           case _ => false
         }

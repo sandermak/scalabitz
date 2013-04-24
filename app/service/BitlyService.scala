@@ -38,6 +38,7 @@ object BitlyService {
          "bitlyArticle" -> articleJson,
          "isProgrammingRelated" -> a.isProgrammingRelated,
          "isPublished" -> false,
+         "toBePublished" -> "pending",
          "hash" -> a.hashCode.toString,
          "rawResultId" -> a.rawResultId,
          "clicks" -> 0

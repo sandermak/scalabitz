@@ -69,6 +69,16 @@ object ArticleRepository {
     update(id, updateCommand)
   }
 
+  def prePublishArticle(id: String) {
+    val updateCommand = Json.obj("$set" -> Json.obj("parsedResults.toBePublished" -> "yes"))
+    update(id, updateCommand)
+  }
+
+  def rejectArticle(id: String) {
+    val updateCommand = Json.obj("$set" -> Json.obj("parsedResults.isPublished" -> false, "parsedResults.toBePublished" -> "never"))
+    update(id, updateCommand)
+  }
+
   def updateClicks(id: String, clicks: Int) {
     val updateCommand = Json.obj("$set" -> Json.obj("parsedResults.clicks" -> clicks))
     update(id, updateCommand)
@@ -78,8 +88,8 @@ object ArticleRepository {
     buildAndRunQuery(Json.obj("parsedResults.isPublished" -> true), Some(10))
   }
 
-  def getAllArticles(): Future[List[(String, JsValue)]] = {
-    buildAndRunQuery(Json.obj(), None)
+  def getPendingArticles(): Future[List[(String, JsValue)]] = {
+    buildAndRunQuery(Json.obj("parsedResults.isPublished" -> false, "parsedResults.toBePublished" -> "pending"), None)
   }
 
   private[this] def getObjId(value: JsValue): String = {

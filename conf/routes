@@ -3,11 +3,11 @@
 # ~~~~
 
 # Home page
-GET     /                           controllers.Application.index
-GET     /about                      controllers.Application.about
+GET     /                           controllers.Frontpage.index
+GET     /about                      controllers.Frontpage.about
 GET     /allarticles                controllers.ScalabitzAdmin.listAllArticles
 GET     /api/articles               controllers.ScalabitzAdmin.retrieveArticles
-GET     /api/articles/:id           controllers.ScalabitzAdmin.publish(id)
+POST    /api/articles/:id/:action   controllers.ScalabitzAdmin.prePublish(id, action)
 
 # Map static resources from the /public folder to the /assets URL path
 GET     /assets/*file               controllers.Assets.at(path="/public", file)

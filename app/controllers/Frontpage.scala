@@ -7,7 +7,7 @@ import play.api.Play.current
 import play.api.Play
 
 
-object Application extends Controller {
+object Frontpage extends Controller {
 
   // Google Analytics properties, used in index.scala.html
   lazy val domain = Play.configuration.getString("site.ga.domain").get

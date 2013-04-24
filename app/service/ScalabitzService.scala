@@ -22,8 +22,8 @@ object ScalabitzService {
     }
   }
 
-  def getAllArticles(): Future[List[ScalabitzArticle]] = {
-    ArticleRepository.getAllArticles().map {
+  def getPendingArticles(): Future[List[ScalabitzArticle]] = {
+    ArticleRepository.getPendingArticles().map {
       articles =>
         for {
           articleJs <- articles
