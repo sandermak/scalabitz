@@ -9,6 +9,7 @@ import play.api.Play
 import play.api.Play.current
 
 import org.apache.commons.codec.binary.Base64.decodeBase64
+import scala.concurrent.Future
 
 object ScalabitzAdmin extends Controller {
 
@@ -39,12 +40,13 @@ object ScalabitzAdmin extends Controller {
         val actionFuture = action match {
           case "prepublish" => ArticleRepository.prePublishArticle(id)
           case "reject" => ArticleRepository.rejectArticle(id)
+          case other => Future { Some("unsupported action") }
         }
 
         actionFuture.map {
           error =>
             val success = error.getOrElse("successful")
-            Redirect(routes.ScalabitzAdmin.listAllArticles()).flashing(
+            Redirect(routes.ScalabitzAdmin.listPendingArticles()).flashing(
               "message" -> s"Action $action for $id: $success"
             )
         }

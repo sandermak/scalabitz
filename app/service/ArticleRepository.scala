@@ -58,9 +58,9 @@ object ArticleRepository {
 
     articleExists(parsedResults).foreach {
       case false => collection.insert[JsValue](json).foreach(lastError =>
-                      if (!lastError.ok) Logger.warn(s"Mongo error after insert: $lastError")
-                    )
-      case true  => Logger.info("Skipped article");
+        if (!lastError.ok) Logger.warn(s"Mongo error after insert: $lastError")
+      )
+      case true => Logger.info("Skipped article");
     }
   }
 
@@ -84,20 +84,24 @@ object ArticleRepository {
     update(id, updateCommand)
   }
 
-  def getPublishedArticles(): Future[List[(String, JsValue)]] = {
-    buildAndRunQuery(Json.obj("parsedResults.isPublished" -> true), Some(10))
+  def getPublishedArticles(howMany: Option[Int] = Some(10)): Future[List[(String, JsValue)]] = {
+    buildAndRunQuery(Json.obj("parsedResults.isPublished" -> true), howMany, SortOrder.Descending)
+  }
+
+  def getPrepublishedArticles(howMany: Option[Int] = Some(1)): Future[List[(String, JsValue)]] = {
+    buildAndRunQuery(Json.obj("parsedResults.isPublished" -> false, "parsedResults.toBePublished" -> "yes"), howMany, SortOrder.Ascending)
   }
 
   def getPendingArticles(): Future[List[(String, JsValue)]] = {
-    buildAndRunQuery(Json.obj("parsedResults.isPublished" -> false, "parsedResults.toBePublished" -> "pending"), None)
+    buildAndRunQuery(Json.obj("parsedResults.isPublished" -> false, "parsedResults.toBePublished" -> "pending"), None, SortOrder.Descending)
   }
 
   private[this] def getObjId(value: JsValue): String = {
     (value \ "_id" \ "$oid").as[String]
   }
 
-  private[this] def buildAndRunQuery(queryObject: JsValue, maxResults: Option[Int]): Future[List[(String, JsValue)]] = {
-    val qb = QueryBuilder().query(queryObject).sort("saved_at" -> SortOrder.Descending)
+  private[this] def buildAndRunQuery(queryObject: JsValue, maxResults: Option[Int], sortOrder: SortOrder): Future[List[(String, JsValue)]] = {
+    val qb = QueryBuilder().query(queryObject).sort("saved_at" -> sortOrder)
     val query = collection.find[JsValue](qb);
     val list = maxResults match {
       case Some(max) => query.toList(max)

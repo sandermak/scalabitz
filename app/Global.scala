@@ -1,5 +1,5 @@
 import play.api._
-import service.BitlyService
+import service.{ScalabitzService, BitlyService}
 
 object Global extends GlobalSettings {
 
@@ -7,6 +7,7 @@ object Global extends GlobalSettings {
   override def onStart(app: Application) {
 
     BitlyService.startScheduledTasks()
+    ScalabitzService.startScheduledTasks()
 
   }
 
