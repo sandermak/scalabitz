@@ -4,7 +4,7 @@
 
 # Home page
 GET     /about                      controllers.Frontpage.about
-GET     /allarticles                controllers.ScalabitzAdmin.listPendingArticles
+GET     /admin/reviewarticles       controllers.ScalabitzAdmin.listPendingArticles
 GET     /api/articles               controllers.ScalabitzAdmin.retrieveArticles
 POST    /api/articles/:id/:action   controllers.ScalabitzAdmin.prePublish(id, action)
 GET     /                           controllers.Frontpage.index(page: Int = 0)

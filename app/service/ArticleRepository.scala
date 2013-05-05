@@ -84,12 +84,12 @@ object ArticleRepository {
     update(id, updateCommand)
   }
 
-  def getPublishedArticles(page: Int, howMany: Option[Int] = Some(10)): Future[List[(String, JsValue)]] = {
-    buildAndRunQuery(Json.obj("parsedResults.isPublished" -> true), howMany, SortOrder.Descending, page)
+  def getPublishedArticles(page: Int, howMany: Int): Future[List[(String, JsValue)]] = {
+    buildAndRunQuery(Json.obj("parsedResults.isPublished" -> true), Some(howMany), SortOrder.Descending, page)
   }
 
-  def getPrepublishedArticles(howMany: Option[Int] = Some(1)): Future[List[(String, JsValue)]] = {
-    buildAndRunQuery(Json.obj("parsedResults.isPublished" -> false, "parsedResults.toBePublished" -> "yes"), howMany, SortOrder.Ascending)
+  def getPrepublishedArticles(howMany: Int): Future[List[(String, JsValue)]] = {
+    buildAndRunQuery(Json.obj("parsedResults.isPublished" -> false, "parsedResults.toBePublished" -> "yes"), Some(howMany), SortOrder.Ascending)
   }
 
   def getPendingArticles(): Future[List[(String, JsValue)]] = {

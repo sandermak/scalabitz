@@ -1,32 +1,34 @@
 @(articles: List[service.ScalabitzArticle], page: Int)
 
 @index {
-@if(articles.isEmpty) {
-    <em>No articles available</em>
-}
-@for(entry <- articles) {
-    <!-- Feed Entry -->
-    <div class="row">
-        <div class="four columns mobile-one">
-            <a href="@entry.article.url">
-                <img class="preview" width="130" height="130" src="http://api.webthumbnail.org/?width=130&amp;height=130&amp;format=png&amp;url=@entry.article.url">
-            </a>
-        </div>
-        <div class="eight columns">
-            <a href="@entry.article.url">@entry.article.title</a><br>
-                (@entry.article.domain)
-            <br>
-            <br>
+    @if(articles.isEmpty) {
+        <em>No articles available</em>
+    }
+    @for(entry <- articles) {
+        <!-- Feed Entry for @entry.id -->
+        <div class="row">
+            <div class="four columns mobile-one">
+                <a href="@entry.article.url">
+                    <img class="preview" width="130" height="130" src="http://api.webthumbnail.org/?width=130&amp;height=130&amp;format=png&amp;url=@entry.article.url">
+                </a>
+            </div>
+            <div class="eight columns">
+                <a href="@entry.article.url">@entry.article.title</a><br>
+                    (@entry.article.domain)
+                <br>
+                <br>
 
-            <div class="row">
-                <div class="five columns"> <a href="https://twitter.com/share" class="twitter-share-button" data-url="@entry.article.url" data-text="@entry.article.title" data-via="scalabitz"> Tweet </a> </div>
-                <div class="seven columns"> <p>@entry.clicks bit.ly clicks </p> </div>
+                <div class="row">
+                    <div class="five columns"> <a href="https://twitter.com/share" class="twitter-share-button" data-url="@entry.article.url" data-text="@entry.article.title" data-via="scalabitz"> Tweet </a> </div>
+                    <div class="seven columns"> <p>@entry.clicks bit.ly clicks </p> </div>
+                </div>
             </div>
         </div>
-    </div>
-    <br>
-    <!-- End Feed Entry -->
-}   <div class="row">
+        <br>
+        <!-- End Feed Entry -->
+    }
+
+    <div class="row">
         <div class="one column">
             @if(page != 0) {
                <a href="@routes.Frontpage.index(page - 1)">&lt;&lt;</a>
@@ -39,7 +41,6 @@
                <a href="@routes.Frontpage.index(page + 1)">&gt;&gt;</a>
             }
         </div>
-
     </div>
 
 

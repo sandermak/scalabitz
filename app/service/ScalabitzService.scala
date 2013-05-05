@@ -21,8 +21,8 @@ object ScalabitzService {
   private[this] lazy val publishTimeout = Play.configuration.getInt("admin.publishtimer").getOrElse(3600)
   private[this] implicit val bitlyArtReads = Json.reads[BitlyArticle]
 
-  def getPublishedArticles(page: Int, howMany: Option[Int] = Some(10)): Future[List[ScalabitzArticle]] = {
-    ArticleRepository.getPublishedArticles(page).map {
+  def getPublishedArticles(page: Int, howMany: Int = 10): Future[List[ScalabitzArticle]] = {
+    ArticleRepository.getPublishedArticles(page, howMany).map {
       articles =>
         for {
           idAndJson <- articles
@@ -51,7 +51,7 @@ object ScalabitzService {
       def receive = {
         case Publish => {
           for {
-            articles <- ArticleRepository.getPrepublishedArticles()
+            articles <- ArticleRepository.getPrepublishedArticles(1)
             idAndJson <- articles
             id = idAndJson._1
           } {

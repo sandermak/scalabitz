@@ -1,6 +1,6 @@
 @index {
   <h3>About Scalabitz</h3>
-  <p>Scalabitz shows Scala-related content that is currently popular on the web. It polls the
+  <p>Scalabitz shows Scala-related content that is currently shared on the web. It polls the
       <a href="http://dev.bitly.com/data_apis.html#v3_search">Bit.ly API</a> to find trending links.
       Once published on Scalabitz, the click-count for a link is updated periodically through the Bit.ly API. Links are shown
       in the order they are published.
@@ -13,10 +13,10 @@
      Watch <a href="http://branchandbound.net">my blog</a> to see how Scalabitz progresses.
   </div>
   <h5>Under the hood</h5>
-  <p>Of course Scalabitz is built using Scala, with Play 2.1. MongoDB is used to store the data. The Play webapp accesses
-     Mongo with the <a href="http://reactivemongo.org">ReactiveMongo</a> driver. This driver is fully asynchronous and meshes
+  <p>Of course Scalabitz is built using Scala, with Play 2.1. MongoDB is used as datastore. The Play webapp accesses
+     Mongo using the <a href="http://reactivemongo.org">ReactiveMongo</a> driver. This driver is fully asynchronous and meshes
      well with Play's async architecture. Calls to the Bit.ly API are also fully asynchronous using Play's
-     <a href="http://www.playframework.com/documentation/2.1.1/ScalaWS">WS API</a>. They are trigger by scheduled messages to Akka actors.
+     <a href="http://www.playframework.com/documentation/2.1.1/ScalaWS">WS API</a>. Akka actors are used for all the scheduled jobs.
   </p>
   <p>Scalabitz is currently deployed on <a href="http://www.heroku.com">Heroku</a> and Mongo is hosted by
      <a href="http://www.mongohq.com">MongoHQ</a>.
