@@ -115,7 +115,7 @@ object BitlyService {
       }
     }
 
-    ScalabitzService.getPublishedArticles().flatMap { articles =>
+    ScalabitzService.getPublishedArticles(0, Some(100)).flatMap { articles =>
       val clickFutures = for(article <- articles) yield clickWSCall(article)
       Future.sequence(clickFutures)
     }

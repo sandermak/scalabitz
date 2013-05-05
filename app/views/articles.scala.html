@@ -1,4 +1,4 @@
-@(articles: List[service.ScalabitzArticle])
+@(articles: List[service.ScalabitzArticle], page: Int)
 
 @index {
 @if(articles.isEmpty) {
@@ -26,5 +26,21 @@
     </div>
     <br>
     <!-- End Feed Entry -->
-}
+}   <div class="row">
+        <div class="one column">
+            @if(page != 0) {
+               <a href="@routes.Frontpage.index(page - 1)">&lt;&lt;</a>
+            }
+        </div>
+        <div class="ten columns">
+        </div>
+        <div class="one column">
+            @if(page < 9 && !articles.isEmpty) {
+               <a href="@routes.Frontpage.index(page + 1)">&gt;&gt;</a>
+            }
+        </div>
+
+    </div>
+
+
 }

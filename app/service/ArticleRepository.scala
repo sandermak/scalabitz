@@ -84,8 +84,8 @@ object ArticleRepository {
     update(id, updateCommand)
   }
 
-  def getPublishedArticles(howMany: Option[Int] = Some(10)): Future[List[(String, JsValue)]] = {
-    buildAndRunQuery(Json.obj("parsedResults.isPublished" -> true), howMany, SortOrder.Descending)
+  def getPublishedArticles(page: Int, howMany: Option[Int] = Some(10)): Future[List[(String, JsValue)]] = {
+    buildAndRunQuery(Json.obj("parsedResults.isPublished" -> true), howMany, SortOrder.Descending, page)
   }
 
   def getPrepublishedArticles(howMany: Option[Int] = Some(1)): Future[List[(String, JsValue)]] = {
@@ -100,9 +100,9 @@ object ArticleRepository {
     (value \ "_id" \ "$oid").as[String]
   }
 
-  private[this] def buildAndRunQuery(queryObject: JsValue, maxResults: Option[Int], sortOrder: SortOrder): Future[List[(String, JsValue)]] = {
+  private[this] def buildAndRunQuery(queryObject: JsValue, maxResults: Option[Int], sortOrder: SortOrder, page: Int = 0): Future[List[(String, JsValue)]] = {
     val qb = QueryBuilder().query(queryObject).sort("saved_at" -> sortOrder)
-    val query = collection.find[JsValue](qb);
+    val query = collection.find[JsValue](qb, QueryOpts().skip(page*maxResults.getOrElse(0)));
     val list = maxResults match {
       case Some(max) => query.toList(max)
       case None => query.toList();

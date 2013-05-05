@@ -13,9 +13,10 @@ object Frontpage extends Controller {
   lazy val domain = Play.configuration.getString("site.ga.domain").get
   lazy val trackingid = Play.configuration.getString("site.ga.trackingid").get
 
-  def index = Action {
+  def index(page: Int) = Action {
     Async {
-      ScalabitzService.getPublishedArticles().map(list => Ok(views.html.articles(list)))
+      val cleanPage = if (page >= 0 && page < 10) page else 0
+      ScalabitzService.getPublishedArticles(cleanPage).map(list => Ok(views.html.articles(list, cleanPage)))
     }
   }
 
