@@ -10,8 +10,10 @@ import play.api.Play
 object Frontpage extends Controller {
 
   // Google Analytics properties, used in index.scala.html
-  lazy val domain = Play.configuration.getString("site.ga.domain").get
-  lazy val trackingid = Play.configuration.getString("site.ga.trackingid").get
+  lazy val domain = getConfig("site.ga.domain")
+  lazy val trackingid = getConfig("site.ga.trackingid")
+  lazy val adclient = getConfig("site.adwords.adclient")
+  lazy val adslot = getConfig("site.adwords.adslot")
 
   def index(page: Int) = Action {
     Async {
@@ -22,6 +24,10 @@ object Frontpage extends Controller {
 
   def about = Action {
     Ok(views.html.about())
+  }
+
+  def getConfig(key: String) = {
+    Play.configuration.getString(key).get
   }
 
 }
