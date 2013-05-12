@@ -31,14 +31,14 @@
     <div class="row">
         <div class="one column">
             @if(page != 0) {
-               <a href="@routes.Frontpage.index(page - 1)">&lt;&lt;</a>
+               <strong><a href="@routes.Frontpage.index(page - 1)">&lt;&lt;</a></strong>
             }
         </div>
         <div class="ten columns">
         </div>
         <div class="one column">
             @if(page < 9 && !articles.isEmpty) {
-               <a href="@routes.Frontpage.index(page + 1)">&gt;&gt;</a>
+               <strong><a href="@routes.Frontpage.index(page + 1)">&gt;&gt;</a></strong>
             }
         </div>
     </div>
