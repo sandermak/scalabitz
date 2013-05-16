@@ -1,6 +1,6 @@
 
 ![Scalabitz logo](https://raw.github.com/sandermak/scalabitz/master/public/images/scalabitz_logo.png)
-   
+
 _See what the Scala community shares_
 
 [Scalabitz.com](http://scalabitz.com) is a site that surfaces interesting Scala content around the web using Bit.ly's API. Read [this blogpost](http://branchandbound.net/blog/data/2013/05/launching-scalabitz/) for a more in-depth description of the project.
@@ -17,6 +17,10 @@ export MONGOHQ_URL="mongodb://localhost:27017/scalabitz"
 export DBNAME=scalabitz
 export APP_SECRET='generated secret by Play'
 export BITLY_TOKEN=<your bitly secret token>
+export TWITTERCKEY=<twitter consumer key>
+export TWITTERCSECRET=<twitter consumer secret>
+export TWITTERAKEY=<twitter access token>
+export TWITTERASECRET=<twitter access token secret>
 export USERNAME=<username for the admin section>
 export PASSWORD=<password for the admin section>
 export TIMEOUT=3600

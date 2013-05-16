@@ -2,12 +2,10 @@ package controllers
 
 import play.api.libs.concurrent.Execution.Implicits._
 import play.api.mvc._
-import service.ScalabitzService
-import play.api.Play.current
-import play.api.Play
+import service.{Configurable, ScalabitzService}
 
 
-object Frontpage extends Controller {
+object Frontpage extends Controller with Configurable {
 
   // Google Analytics properties, used in mainlayout.scala.html
   lazy val domain = getConfig("site.ga.domain")
@@ -26,8 +24,6 @@ object Frontpage extends Controller {
     Ok(views.html.about())
   }
 
-  def getConfig(key: String) = {
-    Play.configuration.getString(key).get
-  }
+
 
 }

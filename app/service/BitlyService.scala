@@ -23,10 +23,10 @@ case class BitlyArticle(title: String, url: String, aggregate_link: String, doma
   }
 }
 
-object BitlyService {
+object BitlyService extends Configurable {
   val bitlySearch = "https://api-ssl.bitly.com/v3/search"
   val bitlyClicks = "https://api-ssl.bitly.com/v3/link/clicks"
-  private[this] val accesstoken = Play.configuration.getString("bitly.accesstoken").get
+  private[this] val accesstoken = getConfig("bitly.accesstoken")
 
   private[this] case class BitlyResponse(status_code: Int, status_txt: String)
   private[this] implicit val bitlyRespReads = Json.reads[BitlyResponse]
