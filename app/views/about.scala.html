@@ -1,4 +1,4 @@
-@index {
+@mainlayout(ga = true) {
   <h3>About Scalabitz</h3>
   <p>Scalabitz shows Scala-related content that is currently shared on the web. It polls the
       <a href="http://dev.bitly.com/data_apis.html#v3_search">Bit.ly API</a> to find relevant links.
@@ -33,4 +33,8 @@
   <p>Scalabitz is fully open-source and can be found on my <a href="https://github.com/sandermak/scalabitz">GitHub account</a> .
       Report issues or feature requests <a href="https://github.com/sandermak/scalabitz/issues">here</a>.
       Or ping <a href="https://twitter.com/Sander_Mak">me on Twitter</a>!</p>
+} {
+  @leftsidebar()
+} {
+  @rightsidebar()
 }

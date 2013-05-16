@@ -1,4 +1,4 @@
-@(content: Html)
+@(ga: Boolean)(content: Html)(left: Html)(right: Html)
 
 <!DOCTYPE html>
 
@@ -59,39 +59,14 @@
         <!-- Nav Sidebar -->
             <!-- This is source ordered to be pulled to the left on larger screens -->
         <div class="three columns pull-six">
-            <div class="panel">
-                <p>Scalabitz uses <a href="http://bitly.com">bit.ly</a>'s API to find out what Scala content is shared around the web. <a href="@routes.Frontpage.about()">Read more.</a></p>
-
-
-                <h5>Powered by</h5>
-
-                <dl class="vertical tabs">
-                    <dd><a href="http://dev.bitly.com/data_apis.html#v3_search">Bit.ly API</a></dd>
-                    <dd><a href="http://www.scala-lang.org/2.10.1">Scala 2.10</a></dd>
-                    <dd><a href="http://www.playframework.com">Play 2.1</a></dd>
-                    <dd><a href="http://www.heroku.com">Heroku</a></dd>
-                </dl>
-                <a href="https://twitter.com/scalabitz" class="twitter-follow-button" data-show-count="false" data-size="large">Follow @@scalabitz</a>
-            </div>
-           </div>
+            @left
+        </div>
 
 
             <!-- Right Sidebar -->
             <!-- On small devices this column is hidden -->
         <aside class="three columns hide-for-small">
-            <script charset="utf-8" type="text/javascript" src="http://ws.amazon.com/widgets/q?ServiceVersion=20070822&amp;MarketPlace=US&amp;ID=V20070822/US/branandboun-20/8001/8c1c92b9-8472-45d4-9153-68caf4c3d511"> </script> <noscript><a href="http://ws.amazon.com/widgets/q?ServiceVersion=20070822&amp;MarketPlace=US&amp;ID=V20070822%2FUS%2Fbranandboun-20%2F8001%2F8c1c92b9-8472-45d4-9153-68caf4c3d511&amp;Operation=NoScript">Amazon.com Widgets</a></noscript>
-            <br>
-            <script type="text/javascript"><!--
-            google_ad_client = "@Frontpage.adclient";
-            /* scalabitz-sq1 */
-            google_ad_slot = "@Frontpage.adslot";
-            google_ad_width = 200;
-            google_ad_height = 200;
-            //-->
-            </script>
-            <script type="text/javascript"
-            src="http://pagead2.googlesyndication.com/pagead/show_ads.js">
-            </script>
+            @right
         </aside>
     </div>
 
@@ -107,7 +82,7 @@
                 </div>
                 <div class="six columns">
                     <ul class="link-list right">
-                        <li><a href="@routes.Frontpage.index(0)">Frontpage</a></li>
+                        <li><a href="@routes.Frontpage.articles(0)">Frontpage</a></li>
                         <li><a href="@routes.Frontpage.about()">About</a></li>
                     </ul>
                 </div>
@@ -117,16 +92,18 @@
 
     <!-- Included JS Files (Compressed) -->
     <script src="@routes.Assets.at("javascripts/foundation.min.js")"></script>
-    <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>
-    <script>
-            (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-            (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-            m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-            })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+    @if(ga) {
+        <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>
+        <script>
+                (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+                (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+                m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+                })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
 
-            ga('create', '@Frontpage.trackingid', '@Frontpage.domain');
-            ga('send', 'pageview');
-    </script>
+                ga('create', '@Frontpage.trackingid', '@Frontpage.domain');
+                ga('send', 'pageview');
+        </script>
+    }
 </body>
 </html>
 

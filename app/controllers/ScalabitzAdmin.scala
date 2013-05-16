@@ -29,7 +29,7 @@ object ScalabitzAdmin extends Controller {
     Action {
       implicit request => // necessary to access flash-scope
         Async {
-          ScalabitzService.getPendingArticles().map(articles => Ok(views.html.scalabitzadmin(articles)))
+          ScalabitzService.getPendingArticles().map(articles => Ok(views.html.admin.scalabitzadmin(articles)))
         }
     }
   }

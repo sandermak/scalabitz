@@ -9,13 +9,13 @@ import play.api.Play
 
 object Frontpage extends Controller {
 
-  // Google Analytics properties, used in index.scala.html
+  // Google Analytics properties, used in mainlayout.scala.html
   lazy val domain = getConfig("site.ga.domain")
   lazy val trackingid = getConfig("site.ga.trackingid")
   lazy val adclient = getConfig("site.adwords.adclient")
   lazy val adslot = getConfig("site.adwords.adslot")
 
-  def index(page: Int) = Action {
+  def articles(page: Int) = Action {
     Async {
       val cleanPage = if (page >= 0 && page < 10) page else 0
       ScalabitzService.getPublishedArticles(cleanPage).map(list => Ok(views.html.articles(list, cleanPage)))

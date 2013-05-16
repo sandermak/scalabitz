@@ -1,6 +1,6 @@
 @(articles: List[service.ScalabitzArticle])(implicit flash: Flash)
 
-@index {
+@mainlayout(ga = false) {
     @if(articles.isEmpty) {
         <em> Could not retrieve articles </em>
     }
@@ -33,4 +33,8 @@
         </div>
     }
 
+} {
+<h2>Admin area</h2>
+} {
+<h2>Todo: stats</h2>
 }
