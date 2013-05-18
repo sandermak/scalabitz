@@ -22,48 +22,56 @@ object ScalabitzService {
   private[this] implicit val bitlyArtReads = Json.reads[BitlyArticle]
 
   def getPublishedArticles(page: Int, howMany: Int = 10): Future[List[ScalabitzArticle]] = {
-    ArticleRepository.getPublishedArticles(page, howMany).map {
-      articles =>
-        for {
-          idAndJson <- articles
-          article <- jsToModel(idAndJson)
-        } yield article
-    }
+    ArticleRepository.getPublishedArticles(page, howMany).map(jsListToModelList)
   }
 
   def getPendingArticles(): Future[List[ScalabitzArticle]] = {
-    ArticleRepository.getPendingArticles().map {
-      articles =>
-        for {
-          idAndJson <- articles
-          article <- jsToModel(idAndJson)
-        } yield article
-    }
+    ArticleRepository.getPendingArticles().map(jsListToModelList)
   }
 
   def startScheduledTasks() {
     import akka.actor._
     import scala.concurrent.duration._
 
-    case object Publish
+    case object PublishArticle
+    case class PublishTweet(article: ScalabitzArticle, triesLeft: Int)
 
     val publishActor = Akka.system.actorOf(Props(new Actor {
       def receive = {
-        case Publish => {
+        case PublishArticle => {
           for {
             articles <- ArticleRepository.getPrepublishedArticles(1)
             idAndJson <- articles
+            article <- jsToModel(idAndJson)
             id = idAndJson._1
           } {
-            Logger.info(s"Published $id")
             ArticleRepository.publishArticle(id)
+            Logger.info(s"Published $id")
+            self ! PublishTweet(article, 3)
           }
         }
+
+        case PublishTweet(article, count) if count > 0 => {
+          TwitterService.postTweet(article).map(twitterMsg =>
+            twitterMsg.foreach { error =>
+              Logger.info(s"Reposting tweet for ${article.id} failed, ${count - 1} retries left")
+              self ! PublishTweet(article, count - 1) }
+          )
+        }
+
+        case PublishTweet(article, 0) => Logger.warn(s"Reposting tweet for ${article.id} failed, won't retry")
       }
     }))
 
 
-    Akka.system.scheduler.schedule(10 seconds, publishTimeout seconds, publishActor, Publish)
+    Akka.system.scheduler.schedule(10 seconds, publishTimeout seconds, publishActor, PublishArticle)
+  }
+
+  private[this] def jsListToModelList(articles: List[(String, JsValue)]): List[ScalabitzArticle] = {
+      for {
+        idAndJson <- articles
+        article <- jsToModel(idAndJson)
+      } yield article
   }
 
   private[this] def jsToModel(idAndJson: (String, JsValue)): Option[ScalabitzArticle] = {
