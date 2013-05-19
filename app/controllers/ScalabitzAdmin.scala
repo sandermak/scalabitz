@@ -54,6 +54,16 @@ object ScalabitzAdmin extends Controller {
     }
   }
 
+  def publishNow() = Secured {
+    Action {
+      ScalabitzService.publishNow()
+      Redirect(routes.ScalabitzAdmin.listPendingArticles()).flashing(
+        "message" -> s"Publishing actor kicked"
+      )
+    }
+  }
+
+
   /**
    * Wrap an action so that it can only be executed if HTTP authorization is successful.
    * Note: this is only secure over https!
