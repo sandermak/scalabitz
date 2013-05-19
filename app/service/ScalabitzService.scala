@@ -16,9 +16,9 @@ case class ScalabitzArticle(id: String, article: BitlyArticle, clicks: Int);
 /**
  * Responsible for transforming database results to Scalabitz model objects.
  */
-object ScalabitzService {
+object ScalabitzService extends Configurable {
 
-  private[this] lazy val publishTimeout = Play.configuration.getInt("admin.publishtimer").getOrElse(3600)
+  private[this] lazy val publishTimeout = getConfigInt("admin.interval.publish")
   private[this] implicit val bitlyArtReads = Json.reads[BitlyArticle]
 
   def getPublishedArticles(page: Int, howMany: Int = 10): Future[List[ScalabitzArticle]] = {
@@ -33,21 +33,27 @@ object ScalabitzService {
     import akka.actor._
     import scala.concurrent.duration._
 
-    case object PublishArticle
-    case class PublishTweet(article: ScalabitzArticle, triesLeft: Int)
+    case class PublishArticle(triesLeft: Int = 3)
+    case class PublishTweet(article: ScalabitzArticle, triesLeft: Int = 3)
 
     val publishActor = Akka.system.actorOf(Props(new Actor {
       def receive = {
-        case PublishArticle => {
+        case PublishArticle(count) => {
           for {
             articles <- ArticleRepository.getPrepublishedArticles(1)
             idAndJson <- articles
             article <- jsToModel(idAndJson)
             id = idAndJson._1
           } {
-            ArticleRepository.publishArticle(id)
-            Logger.info(s"Published $id")
-            self ! PublishTweet(article, 3)
+            val publishFuture = ArticleRepository.publishArticle(id)
+            publishFuture.onSuccess { case _ =>
+              Logger.info(s"Published $id")
+              self ! PublishTweet(article)
+            }
+            publishFuture.onFailure { case exc =>
+              Logger.info(s"Republishing article ${article.id}, ${count - 1} retries left")
+              self ! PublishArticle(count - 1)
+            }
           }
         }
 
@@ -64,7 +70,7 @@ object ScalabitzService {
     }))
 
 
-    Akka.system.scheduler.schedule(10 seconds, publishTimeout seconds, publishActor, PublishArticle)
+    Akka.system.scheduler.schedule(10 seconds, publishTimeout minutes, publishActor, PublishArticle)
   }
 
   private[this] def jsListToModelList(articles: List[(String, JsValue)]): List[ScalabitzArticle] = {

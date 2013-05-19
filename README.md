@@ -23,7 +23,8 @@ export TWITTERAKEY=<twitter access token>
 export TWITTERASECRET=<twitter access token secret>
 export USERNAME=<username for the admin section>
 export PASSWORD=<password for the admin section>
-export TIMEOUT=3600
+# publishing interval in minutes
+export TIMEOUT=10
 play clean-all run 
 ```
 
