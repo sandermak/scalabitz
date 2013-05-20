@@ -2,13 +2,14 @@ package service
 
 import play.api.libs.concurrent.Execution.Implicits._
 import play.api.libs.ws.{WS, Response}
-import play.api.libs.json.{JsValue, Writes, Json}
+import play.api.libs.json.{JsResult, JsValue, Writes, Json}
 import play.api.{Logger, Play}
 import play.api.Play.current
 import concurrent.Future
 import service.controllers.ArticleRepository
 import play.api.libs.json.Writes._
 import play.libs.Akka
+import scala.util.parsing.json.JSONArray
 
 
 case class BitlyArticle(title: String, url: String, aggregate_link: String, domain: String, content: String, keywords: Option[String]) {
@@ -83,8 +84,7 @@ object BitlyService extends Configurable {
        Logger.info(s"Bit.ly responded with status ${r.status} for call $url");
        val bitlyArticles = for {
          result <- parseResult(r) if result.status_code == 200
-         articles <- parseArticles(r)
-       } yield articles
+       } yield parseArticles(r)
 
        // Store bit.ly response and the individual articles (only new ones are stored, based on hash of article)
        val articleList = bitlyArticles.getOrElse(List())
@@ -125,10 +125,18 @@ object BitlyService extends Configurable {
   }
 
   private[this] def parseResult(r: Response): Option[BitlyResponse] = {
-    Json.fromJson[BitlyResponse](r.json).asOpt
+    val result: JsResult[BitlyResponse] = Json.fromJson[BitlyResponse](r.json)
+    val resultOpt = result.asOpt
+    if(!resultOpt.isDefined) Logger.error(s"JSON parsing failed for complete response: $result")
+    resultOpt
   }
 
-  private[this] def parseArticles(r: Response): Option[List[BitlyArticle]] = {
-    Json.fromJson[List[BitlyArticle]](r.json \ "data" \ "results").asOpt
+  private[this] def parseArticles(r: Response): List[BitlyArticle] = {
+    val result = collection.mutable.ListBuffer[BitlyArticle]()
+    for(value <- (r.json \ "data" \ "results").as[List[JsValue]]) {
+       Json.fromJson[BitlyArticle](value).fold(errors => Logger.error(s"JSON parsing failed for individual article: $errors"), article => result += article)
+    }
+
+    result.toList
   }
 }
