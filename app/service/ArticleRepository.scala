@@ -25,6 +25,7 @@ import play.api.Play.current
 
 
 object ArticleRepository {
+
   val db = ReactiveMongoPlugin.db
   lazy val collection = db("scalabitz")
   lazy val rawcollection = db("scalabitz_rawresults")
@@ -77,6 +78,15 @@ object ArticleRepository {
   def rejectArticle(id: String) = {
     val updateCommand = Json.obj("$set" -> Json.obj("parsedResults.isPublished" -> false, "parsedResults.toBePublished" -> "never"))
     update(id, updateCommand)
+  }
+
+  def removeArticle(id: String) = {
+    collection.remove(BSONDocument("_id" -> BSONObjectID(id))).map(lastError =>
+      if (!lastError.ok) {
+        Logger.warn(s"Mongo error after update of $id: $lastError")
+        Some(s"Error during removal of $id")
+      } else None
+    )
   }
 
   def updateClicks(id: String, clicks: Int) = {

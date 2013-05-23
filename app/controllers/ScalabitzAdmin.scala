@@ -34,12 +34,13 @@ object ScalabitzAdmin extends Controller {
     }
   }
 
-  def prePublish(id: String, action: String) = Secured {
+  def changeArticle(id: String, action: String) = Secured {
     Action {
       Async {
         val actionFuture = action match {
           case "prepublish" => ArticleRepository.prePublishArticle(id)
           case "reject" => ArticleRepository.rejectArticle(id)
+          case "remove" => ArticleRepository.removeArticle(id)
           case other => Future { Some("unsupported action") }
         }
 

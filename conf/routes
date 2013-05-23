@@ -6,7 +6,7 @@
 GET     /about                      controllers.Frontpage.about
 GET     /admin/reviewarticles       controllers.ScalabitzAdmin.listPendingArticles
 GET     /api/articles               controllers.ScalabitzAdmin.retrieveArticles
-POST    /api/articles/:id/:action   controllers.ScalabitzAdmin.prePublish(id, action)
+POST    /api/articles/:id/:action   controllers.ScalabitzAdmin.changeArticle(id, action)
 POST    /api/publishnow             controllers.ScalabitzAdmin.publishNow
 GET     /google2b73a5f8859cbfff.html controllers.Assets.at(path="/public", file = "google2b73a5f8859cbfff.html")
 GET     /                           controllers.Frontpage.articles(page: Int = 0)

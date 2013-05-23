@@ -17,17 +17,21 @@
             </div>
             <div class="eight columns">
                 <a href="@entry.article.url">@entry.article.title</a><br>
-                    (@entry.article.domain)
+                    (@entry.article.domain) @entry.id
                 <br>
                 <br>
                 @defining(if(entry.article.isProgrammingRelated) "success" else "alert") { cssclass =>
                     <div class="alert-box @cssclass">programmingRelated indicator: @(entry.article.isProgrammingRelated)</div>
                 }
-
                 <div class="row">
-                    <div class="four columns"> <form action="@routes.ScalabitzAdmin.prePublish(entry.id, "prepublish")" method="POST"> <input class="nice small radius success button" type="submit" value="prepublish"> </form> </div>
-                    <div class="three columns"><form action="@routes.ScalabitzAdmin.prePublish(entry.id, "reject")" method="POST"> <input class="nice small radius button" type="submit" value="reject"> </form> </div>
+                    <div class="four columns"> <form action="@routes.ScalabitzAdmin.changeArticle(entry.id, "prepublish")" method="POST"> <input class="nice small radius success button" type="submit" value="prepublish"> </form> </div>
+                    <div class="three columns"><form action="@routes.ScalabitzAdmin.changeArticle(entry.id, "reject")" method="POST"> <input class="nice small radius button" type="submit" value="&nbsp;&nbsp;reject&nbsp;&nbsp;"> </form> </div>
                     <div class="five columns"> <a href="https://twitter.com/share" class="twitter-share-button" data-url="@entry.article.url" data-text="@entry.article.title" data-via="scalabitz"> Tweet </a> </div>
+                </div>
+                <div class="row">
+                    <div class="four columns"></div>
+                    <div class="three columns"><form action="@routes.ScalabitzAdmin.changeArticle(entry.id, "remove")" method="POST"> <input class="nice small radius button" type="submit" value="remove"> </form> </div>
+                    <div class="five columns"> </div>
                 </div>
             </div>
         </div>
@@ -38,7 +42,7 @@
         <h5>Actions</h5>
 
         <dl class="vertical tabs">
-            <dd><form action="@routes.ScalabitzAdmin.publishNow" method="POST"><input class="nice small radius button" type="submit"></form></dd>
+            <dd><form action="@routes.ScalabitzAdmin.publishNow" method="POST"><input class="nice small radius button" type="submit" value="Publish now"></form></dd>
         </dl>
     </div>
 } {
