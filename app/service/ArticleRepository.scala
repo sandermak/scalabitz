@@ -57,7 +57,7 @@ object ArticleRepository {
 
     )
 
-    articleExists(parsedResults).foreach {
+    articleExistsForQuery(Json.obj("parsedResults.hash" -> parsedResults \ "hash")).foreach {
       case false => collection.insert[JsValue](json).foreach(lastError =>
         if (!lastError.ok) Logger.warn(s"Mongo error after insert: $lastError")
       )
@@ -102,8 +102,14 @@ object ArticleRepository {
     buildAndRunQuery(Json.obj("parsedResults.isPublished" -> false, "parsedResults.toBePublished" -> "yes"), Some(howMany), SortOrder.Ascending)
   }
 
-  def getPendingArticles(): Future[List[(String, JsValue)]] = {
-    buildAndRunQuery(Json.obj("parsedResults.isPublished" -> false, "parsedResults.toBePublished" -> "pending"), None, SortOrder.Descending)
+  def getPendingArticles(): Future[List[(String, JsValue, Boolean)]] = {
+    buildAndRunQuery(Json.obj("parsedResults.isPublished" -> false, "parsedResults.toBePublished" -> "pending"), None, SortOrder.Descending).flatMap { articles =>
+      // Find out if we've seen these articles before, add this info to the articles result.
+      val existsFutures = articles.map {
+        article => articleExistsForQuery(Json.obj("parsedResults.bitlyArticle.url" -> article._2 \ "parsedResults" \ "bitlyArticle" \ "url"), 1)
+      }
+      Future.sequence(existsFutures).map(existsResults => (articles, existsResults).zipped.map((article, exists) => (article._1, article._2, exists)))
+    }
   }
 
   private[this] def getObjId(value: JsValue): String = {
@@ -115,16 +121,15 @@ object ArticleRepository {
     val query = collection.find[JsValue](qb, QueryOpts().skip(page*maxResults.getOrElse(0)));
     val list = maxResults match {
       case Some(max) => query.toList(max)
-      case None => query.toList();
+      case None => query.toList()
     }
 
     list.map(_.map(jsValue => (getObjId(jsValue), jsValue)))
   }
 
-  private[this] def articleExists(parsedResults: JsValue): Future[Boolean] = {
-    val hash = parsedResults \ "hash"
-    val qb = QueryBuilder().query(Json.obj("parsedResults.hash" -> hash))
-    collection.find[JsValue](qb).toList.map(t => !t.isEmpty)
+  private[this] def articleExistsForQuery(queryObject: JsValue, maxExpected: Int = 0): Future[Boolean] = {
+    val qb = QueryBuilder().query(queryObject)
+    collection.find[JsValue](qb).toList.map(_.size > maxExpected)
   }
 
   private[this] def update(id: String, updateCommand: JsObject): Future[Option[String]] = {

@@ -7,7 +7,7 @@ import play.api.libs.json.{JsValue, Json}
 import play.Logger
 import play.libs.Akka
 
-case class ScalabitzArticle(id: String, article: BitlyArticle, clicks: Int);
+case class ScalabitzArticle(id: String, article: BitlyArticle, clicks: Int, alreadySeen: Option[Boolean] = Some(false));
 
 /**
  * Responsible for transforming database results to Scalabitz model objects.
@@ -27,7 +27,7 @@ object ScalabitzService extends Configurable {
   }
 
   def getPendingArticles(): Future[List[ScalabitzArticle]] = {
-    ArticleRepository.getPendingArticles().map(jsListToModelList)
+    ArticleRepository.getPendingArticles().map(jsListToModelListWithSeen)
   }
 
   def publishNow() = {
@@ -42,7 +42,7 @@ object ScalabitzService extends Configurable {
           for {
             articles <- ArticleRepository.getPrepublishedArticles(1)
             idAndJson <- articles
-            article <- jsToModel(idAndJson)
+            article <- jsToModel(idAndJson._1, idAndJson._2)
             id = idAndJson._1
           } {
             val publishFuture = ArticleRepository.publishArticle(id)
@@ -78,16 +78,24 @@ object ScalabitzService extends Configurable {
     Akka.system.scheduler.schedule(10 seconds, publishTimeout minutes, publishActor, PublishArticle())
   }
 
-  private[this] def jsListToModelList(articles: List[(String, JsValue)]): List[ScalabitzArticle] = {
+  private[this] def jsListToModelListWithSeen(articles: List[(String, JsValue, Boolean)]): List[ScalabitzArticle] = {
       for {
         idAndJson <- articles
-        article <- jsToModel(idAndJson)
+        article <- jsToModel(idAndJson._1, idAndJson._2, Some(idAndJson._3))
       } yield article
   }
 
-  private[this] def jsToModel(idAndJson: (String, JsValue)): Option[ScalabitzArticle] = {
-    val article = Json.fromJson[BitlyArticle](idAndJson._2 \ "parsedResults" \ "bitlyArticle")
-    article.asOpt.map(article => ScalabitzArticle(idAndJson._1, article, (idAndJson._2 \ "parsedResults" \ "clicks").as[Int]))
+  private[this] def jsListToModelList(articles: List[(String, JsValue)]): List[ScalabitzArticle] = {
+    for {
+      idAndJson <- articles
+      article <- jsToModel(idAndJson._1, idAndJson._2)
+    } yield article
+  }
+
+  private[this] def jsToModel(id: String, json: JsValue, seen: Option[Boolean] = None): Option[ScalabitzArticle] = {
+    val article = Json.fromJson[BitlyArticle](json \ "parsedResults" \ "bitlyArticle")
+    val clicks = (json \ "parsedResults" \ "clicks").as[Int]
+    article.asOpt.map(article => ScalabitzArticle(id, article, clicks, seen))
   }
 
 }

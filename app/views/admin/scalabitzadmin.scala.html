@@ -23,6 +23,9 @@
                 @defining(if(entry.article.isProgrammingRelated) "success" else "alert") { cssclass =>
                     <div class="alert-box @cssclass">programmingRelated indicator: @(entry.article.isProgrammingRelated)</div>
                 }
+                @defining(if(entry.alreadySeen.exists(identity)) "alert" else "success") { cssclass =>
+                    <div class="alert-box @cssclass">alreadySeen indicator: @(entry.alreadySeen)</div>
+                }
                 <div class="row">
                     <div class="four columns"> <form action="@routes.ScalabitzAdmin.changeArticle(entry.id, "prepublish")" method="POST"> <input class="nice small radius success button" type="submit" value="prepublish"> </form> </div>
                     <div class="three columns"><form action="@routes.ScalabitzAdmin.changeArticle(entry.id, "reject")" method="POST"> <input class="nice small radius button" type="submit" value="&nbsp;&nbsp;reject&nbsp;&nbsp;"> </form> </div>
